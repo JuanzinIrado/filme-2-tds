@@ -1,0 +1,275 @@
+
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Filmes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .filmes-lista {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .filme-item {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .filme-item:last-child {
+      border-bottom: none;
+    }
+
+    .filme-item.strong {
+      display: block;
+      margin-top: 5px;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Catálogo de Filmes</h1>
+  <div>
+    <label for="nome">Nome do filme:</label>
+    <input type="text" id="nome" placeholder="Insira o nome do filme">
+    <label for="classificacao">Classificação indicativa:</label>
+    <input type="text" id="classificacao" placeholder="Ex: Livre, 12 anos, etc.">
+    <label for="duracao">Duração (minutos):</label>
+    <input type="number" id="duracao" placeholder="Duração em minutos">
+    <label for="genero">Gênero:</label>
+    <input type="text" id="genero" placeholder="Ex: Ação, Comédia, Drama, etc.">
+    <label for="ano">Ano de lançamento:</label>
+    <input type="number" id="ano" placeholder="Ano de lançamento">
+    <label for="sinopse">Sinopse:</label>
+    <textarea id="sinopse" rows="4" placeholder="Insira a sinopse do filme"></textarea>
+    <button onclick="cadastrarFilme()">Cadastrar Filme</button>
+    <button onclick="atualizarFilme()" style="display:none;" id="btn-atualizar">Atualizar Filme</button>
+  </div>
+  <div>
+    <h2>Buscar Filme por Nome</h2>
+    <input type="text" id="busca" placeholder="Digite o nome do filme">
+    <button onclick="buscarFilme()">Buscar</button>
+  </div>
+  <div class="filmes-lista">
+    <!-- Aqui serão exibidos os filmes cadastrados -->
+  </div>
+  <script>
+    // Variáveis para armazenar os filmes
+let filmes = [];
+
+// Função para cadastrar um novo filme
+function cadastrarFilme() {
+  const nome = document.getElementById('nome').value;
+  const classificacao = document.getElementById('classificacao').value;
+  const duracao = document.getElementById('duracao').value;
+  const genero = document.getElementById('genero').value;
+  const ano = document.getElementById('ano').value;
+  const sinopse = document.getElementById('sinopse').value;
+
+  // Criar um novo objeto de filme
+  const novoFilme = {
+    nome,
+    classificacao,
+    duracao,
+    genero,
+    ano,
+    sinopse
+  };
+
+  // Adicionar o novo filme ao array
+  filmes.push(novoFilme);
+
+  // Limpar os campos de entrada
+  limparCamposEntrada();
+
+  // Exibir os filmes na lista
+  exibirFilmes();
+}
+
+// Função para atualizar um filme existente
+function atualizarFilme() {
+  const nome = document.getElementById('nome').value;
+  const classificacao = document.getElementById('classificacao').value;
+  const duracao = document.getElementById('duracao').value;
+  const genero = document.getElementById('genero').value;
+  const ano = document.getElementById('ano').value;
+  const sinopse = document.getElementById('sinopse').value;
+
+  // Encontrar o índice do filme a ser atualizado
+  const indiceFilme = filmes.findIndex(filme => filme.nome === nome);
+
+  if (indiceFilme !== -1) {
+    // Atualizar as informações do filme
+    filmes[indiceFilme] = {
+      nome,
+      classificacao,
+      duracao,
+      genero,
+      ano,
+      sinopse
+    };
+
+    // Limpar os campos de entrada
+    limparCamposEntrada();
+
+    // Exibir os filmes na lista
+    exibirFilmes();
+
+    // Esconder o botão de atualizar
+    document.getElementById('btn-atualizar').style.display = 'none';
+  } else {
+    alert('Filme não encontrado.');
+  }
+}
+
+// Função para buscar um filme por nome
+function buscarFilme() {
+  const nomeBusca = document.getElementById('busca').value.toLowerCase();
+
+  // Filtrar os filmes com base no nome
+  const filmesEncontrados = filmes.filter(filme =>
+    filme.nome.toLowerCase().includes(nomeBusca)
+  );
+
+  // Exibir os filmes encontrados
+  exibirFilmes(filmesEncontrados);
+}
+
+// Função para exibir os filmes na lista
+function exibirFilmes(filmesParaExibir = filmes) {
+  const listaFilmes = document.querySelector('.filmes-lista');
+  listaFilmes.innerHTML = '';
+
+  filmesParaExibir.forEach(filme => {
+    const filmeItem = document.createElement('div');
+    filmeItem.classList.add('filme-item');
+
+    const nomeFilme = document.createElement('h2');
+    nomeFilme.textContent = filme.nome;
+
+    const classificacaoFilme = document.createElement('label');
+    classificacaoFilme.textContent = `Classificação indicativa: ${filme.classificacao}`;
+
+    const duracaoFilme = document.createElement('label');
+    duracaoFilme.textContent = `Duração: ${filme.duracao} minutos`;
+
+    const generoFilme = document.createElement('label');
+    generoFilme.textContent = `Gênero: ${filme.genero}`;
+
+    const anoFilme = document.createElement('label');
+    anoFilme.textContent = `Ano de lançamento: ${filme.ano}`;
+
+    const sinopseFilme = document.createElement('p');
+    sinopseFilme.textContent = `Sinopse: ${filme.sinopse}`;
+
+    const acoes = document.createElement('div');
+    acoes.classList.add('actions');
+
+    const btnEditar = document.createElement('button');
+    btnEditar.textContent = 'Editar';
+    btnEditar.onclick = () => editarFilme(filme);
+
+    const btnExcluir = document.createElement('button');
+    btnExcluir.textContent = 'Excluir';
+    btnExcluir.onclick = () => excluirFilme(filme.nome);
+
+    acoes.appendChild(btnEditar);
+    acoes.appendChild(btnExcluir);
+
+    filmeItem.appendChild(nomeFilme);
+    filmeItem.appendChild(classificacaoFilme);
+    filmeItem.appendChild(duracaoFilme);
+    filmeItem.appendChild(generoFilme);
+    filmeItem.appendChild(anoFilme);
+    filmeItem.appendChild(sinopseFilme);
+    filmeItem.appendChild(acoes);
+
+    listaFilmes.appendChild(filmeItem);
+  });
+}
+
+// Função para limpar os campos de entrada
+function limparCamposEntrada() {
+  document.getElementById('nome').value = '';
+  document.getElementById('classificacao').value = '';
+  document.getElementById('duracao').value = '';
+  document.getElementById('genero').value = '';
+  document.getElementById('ano').value = '';
+  document.getElementById('sinopse').value = '';
+}
+
+// Função para editar um filme existente
+function editarFilme(filme) {
+  document.getElementById('nome').value = filme.nome;
+  document.getElementById('classificacao').value = filme.classificacao;
+  document.getElementById('duracao').value = filme.duracao;
+  document.getElementById('genero').value = filme.genero;
+  document.getElementById('ano').value = filme.ano;
+  document.getElementById('sinopse').value = filme.sinopse;
+
+  // Exibir o botão de atualizar
+  document.getElementById('btn-atualizar').style.display = 'inline';
+}
+
+// Função para excluir um filme
+function excluirFilme(nomeFilme) {
+  // Encontrar o índice do filme a ser excluído
+  const indiceFilme = filmes.findIndex(filme => filme.nome === nomeFilme);
+
+  if (indiceFilme !== -1) {
+    // Remover o filme do array
+    filmes.splice(indiceFilme, 1);
+
+    // Exibir os filmes atualizados na lista
+    exibirFilmes();
+  } else {
+    alert('Filme não encontrado.');
+  }
+}
+  </script>
+</body>
+</html>
